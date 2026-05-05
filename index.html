@@ -1,115 +1,480 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VerseByLuha ✨</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VerseByLuha ✨ Calculadora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cosmic-pink: #ffb6f9;
+            --cosmic-blue: #a0e7ff;
+            --cosmic-purple: #cdb4ff;
+            --dark-bg: #1a0b2e;
+            --glass-bg: rgba(25, 10, 40, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-main: #ffffff;
+            --text-muted: #b8a6d9;
+        }
 
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #ffb6f9, #a0e7ff, #cdb4ff);
-    color: #333;
-    text-align: center;
-    padding: 20px;
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
 
-h1 {
-    color: white;
-    text-shadow: 0 0 10px rgba(255,255,255,0.8);
-}
+        body {
+            background: linear-gradient(-45deg, #0f0518, #2a0845, #4a154b, #1a0b2e);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-.container {
-    background: rgba(255,255,255,0.9);
-    padding: 20px;
-    border-radius: 20px;
-    max-width: 400px;
-    margin: auto;
-}
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-select, input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 10px;
-    border: none;
-}
+        .calculator-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 0 0 20px rgba(255, 182, 249, 0.1);
+        }
 
-.total {
-    font-size: 24px;
-    font-weight: bold;
-    color: #6a00f4;
-}
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
 
-.note {
-    font-size: 12px;
-    margin-top: 10px;
-}
-</style>
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            background: linear-gradient(to right, var(--cosmic-pink), var(--cosmic-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 182, 249, 0.3);
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .section {
+            margin-bottom: 25px;
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        h3 {
+            font-size: 15px;
+            margin-bottom: 15px;
+            color: var(--cosmic-blue);
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Grid for Cards */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+        /* Radio Cards */
+        .radio-card {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .radio-card input { display: none; }
+
+        .card-content {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 12px 10px;
+            text-align: center;
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .card-content .price { font-weight: 600; color: var(--cosmic-pink); }
+
+        .radio-card input:checked + .card-content {
+            background: rgba(255, 182, 249, 0.15);
+            border-color: var(--cosmic-pink);
+            box-shadow: 0 0 15px rgba(255, 182, 249, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Counters for Decorations */
+        .counter-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .counter-item:last-child { border-bottom: none; }
+
+        .counter-info {
+            display: flex;
+            flex-direction: column;
+            font-size: 13px;
+        }
+        .counter-price { color: var(--cosmic-blue); font-size: 11px; }
+
+        .counter-controls {
+            display: flex;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 2px;
+        }
+
+        .counter-btn {
+            background: transparent;
+            border: none;
+            color: var(--cosmic-pink);
+            font-size: 18px;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .counter-btn:active { background: rgba(255,255,255,0.1); }
+        .counter-val { width: 25px; text-align: center; font-size: 14px; font-weight: 600; }
+
+        /* General Inputs */
+        input[type="number"] {
+            width: 100%;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+        }
+        input[type="number"]:focus { border-color: var(--cosmic-blue); }
+
+        /* Toggle Checkbox */
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 34px;
+            border: 1px solid var(--glass-border);
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px; width: 20px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .4s;
+        }
+        input:checked + .slider {
+            background-color: var(--cosmic-pink);
+            box-shadow: 0 0 10px var(--cosmic-pink);
+        }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        /* Breakdown & Total */
+        .receipt {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .breakdown {
+            list-style: none;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            border-bottom: 1px dashed rgba(255,255,255,0.2);
+            padding-bottom: 15px;
+        }
+
+        .breakdown li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .total-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .total-label { font-size: 18px; font-weight: 600; }
+        .total-price {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--cosmic-pink);
+            text-shadow: 0 0 15px rgba(255, 182, 249, 0.4);
+        }
+
+        .notes {
+            text-align: center;
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+
+        .glow-text { color: var(--cosmic-purple); font-style: italic; }
+    </style>
 </head>
-
 <body>
 
-<h1>✨ VerseByLuha ✨</h1>
+    <div class="calculator-container">
+        <div class="header">
+            <h1>VerseByLuha ✨</h1>
+            <p class="subtitle">Calculadora de Universo</p>
+        </div>
 
-<div class="container">
+        <!-- TÉCNICA -->
+        <div class="section">
+            <h3>💫 Técnica Base</h3>
+            <div class="grid-2">
+                <label class="radio-card">
+                    <input type="radio" name="tecnica" value="15" data-name="Esmaltado" checked onchange="calculate()">
+                    <div class="card-content">
+                        <span>Esmaltado</span>
+                        <span class="price">S/ 15</span>
+                    </div>
+                </label>
+                <label class="radio-card">
+                    <input type="radio" name="tecnica" value="25" data-name="Rubber" onchange="calculate()">
+                    <div class="card-content">
+                        <span>Rubber</span>
+                        <span class="price">S/ 25</span>
+                    </div>
+                </label>
+                <label class="radio-card">
+                    <input type="radio" name="tecnica" value="30" data-name="Builder Gel" onchange="calculate()">
+                    <div class="card-content">
+                        <span>Builder gel</span>
+                        <span class="price">S/ 30</span>
+                    </div>
+                </label>
+                <label class="radio-card">
+                    <input type="radio" name="tecnica" value="35" data-name="Acrílicas" onchange="calculate()">
+                    <div class="card-content">
+                        <span>Acrílicas</span>
+                        <span class="price">S/ 35</span>
+                    </div>
+                </label>
+            </div>
+        </div>
 
-<h3>Técnica</h3>
-<select id="tecnica">
-<option value="15">Esmaltado permanente (S/15)</option>
-<option value="25">Rubber (S/25)</option>
-<option value="30">Builder gel (S/30)</option>
-<option value="35">Acrílicas (S/35)</option>
-</select>
+        <!-- LARGO -->
+        <div class="section">
+            <h3>📏 Largo</h3>
+            <div class="grid-3">
+                <label class="radio-card">
+                    <input type="radio" name="largo" value="0" data-name="Largo 1" checked onchange="calculate()">
+                    <div class="card-content"><span>L1</span><span class="price">Inc.</span></div>
+                </label>
+                <label class="radio-card">
+                    <input type="radio" name="largo" value="5" data-name="Largo 2" onchange="calculate()">
+                    <div class="card-content"><span>L2</span><span class="price">+S/ 5</span></div>
+                </label>
+                <label class="radio-card">
+                    <input type="radio" name="largo" value="8" data-name="Largo 3" onchange="calculate()">
+                    <div class="card-content"><span>L3</span><span class="price">+S/ 8</span></div>
+                </label>
+                <label class="radio-card">
+                    <input type="radio" name="largo" value="10" data-name="Largo 4" onchange="calculate()">
+                    <div class="card-content"><span>L4</span><span class="price">+S/ 10</span></div>
+                </label>
+                <label class="radio-card">
+                    <input type="radio" name="largo" value="12" data-name="Largo 5" onchange="calculate()">
+                    <div class="card-content"><span>L5</span><span class="price">+S/ 12</span></div>
+                </label>
+                <label class="radio-card">
+                    <input type="radio" name="largo" value="15" data-name="Largo 6" onchange="calculate()">
+                    <div class="card-content"><span>L6</span><span class="price">+S/ 15</span></div>
+                </label>
+            </div>
+        </div>
 
-<h3>Largo</h3>
-<select id="largo">
-<option value="0">Largo 1 (incluido)</option>
-<option value="5">Largo 2 (+5)</option>
-<option value="8">Largo 3 (+8)</option>
-<option value="10">Largo 4 (+10)</option>
-<option value="12">Largo 5 (+12)</option>
-<option value="15">Largo 6 (+15)</option>
-</select>
+        <!-- DECORACIONES -->
+        <div class="section">
+            <h3>🎨 Decoraciones y Efectos (x uña)</h3>
+            <div id="decorations-container">
+                <!-- Se inyecta por JS -->
+            </div>
+        </div>
 
-<h3>Decoraciones (cantidad de uñas)</h3>
-<input type="number" id="deco" placeholder="Cantidad de uñas decoradas">
+        <!-- PIEDRITAS -->
+        <div class="section">
+            <h3>💎 Piedritas (Strass)</h3>
+            <input type="number" id="piedras" min="0" placeholder="Cantidad total de piedritas (S/ 0.50 c/u)" oninput="calculate()">
+        </div>
 
-<h3>Piedritas (cantidad)</h3>
-<input type="number" id="piedras" placeholder="Cantidad de strass">
+        <!-- RETIRO -->
+        <div class="section toggle-container">
+            <div class="counter-info">
+                <span style="font-size: 15px; color: var(--cosmic-blue);">🪄 Retiro previo</span>
+                <span class="counter-price">+ S/ 15.00</span>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="retiro" onchange="calculate()">
+                <span class="slider"></span>
+            </label>
+        </div>
 
-<h3>Retiro</h3>
-<select id="retiro">
-<option value="0">No</option>
-<option value="15">Sí (+15)</option>
-</select>
+        <!-- RESULTADO -->
+        <div class="receipt">
+            <ul class="breakdown" id="breakdown-list">
+                <!-- Se inyecta por JS -->
+            </ul>
+            <div class="total-container">
+                <span class="total-label">Total Final:</span>
+                <span class="total-price">S/ <span id="total-price">15.00</span></span>
+            </div>
+        </div>
 
-<h2 class="total">Total: S/ <span id="total">0</span></h2>
+        <p class="notes">
+            El precio base aplica solo para uñas cortas y sin diseño. Cualquier decoración, efecto o largo adicional incrementa el precio.<br><br>
+            <span class="glow-text">"Cada set es único, como tu universo ✨<br>El precio final refleja los detalles que elijas."</span>
+        </p>
+    </div>
 
-<p class="note">
-El precio base aplica solo para uñas cortas y sin diseño.<br>
-Cada set es único, como tu universo ✨
-</p>
+    <script>
+        const decorations = [
+            { id: 'french', name: 'French', price: 1 },
+            { id: 'babyb', name: 'Baby boomer', price: 2 },
+            { id: 'cateye', name: 'Cat eye', price: 3 },
+            { id: 'aura', name: 'Aura', price: 3 },
+            { id: 'blooming', name: 'Blooming gel', price: 3 },
+            { id: 'espejo', name: 'Efecto espejo', price: 5 },
+            { id: 'd_simple', name: 'Diseño simple', price: 2 },
+            { id: 'd_pro', name: 'Diseño elaborado', price: 5 }
+        ];
 
-</div>
+        const decoContainer = document.getElementById('decorations-container');
 
-<script>
-function calcular() {
-    let tecnica = parseInt(document.getElementById("tecnica").value) || 0;
-    let largo = parseInt(document.getElementById("largo").value) || 0;
-    let deco = parseInt(document.getElementById("deco").value) || 0;
-    let piedras = parseInt(document.getElementById("piedras").value) || 0;
-    let retiro = parseInt(document.getElementById("retiro").value) || 0;
+        // Renderizar contadores de decoración
+        decorations.forEach(deco => {
+            const html = `
+                <div class="counter-item">
+                    <div class="counter-info">
+                        <span>${deco.name}</span>
+                        <span class="counter-price">+ S/ ${deco.price.toFixed(2)}</span>
+                    </div>
+                    <div class="counter-controls">
+                        <button class="counter-btn" onclick="updateQty('${deco.id}', -1)">-</button>
+                        <span class="counter-val" id="qty-${deco.id}">0</span>
+                        <button class="counter-btn" onclick="updateQty('${deco.id}', 1)">+</button>
+                    </div>
+                </div>
+            `;
+            decoContainer.insertAdjacentHTML('beforeend', html);
+        });
 
-    let total = tecnica + largo + (deco * 3) + (piedras * 0.5) + retiro;
+        let decoState = {};
+        decorations.forEach(d => decoState[d.id] = 0);
 
-    document.getElementById("total").innerText = total.toFixed(2);
-}
+        function updateQty(id, change) {
+            let current = decoState[id];
+            let newVal = current + change;
+            if(newVal >= 0 && newVal <= 10) { // Max 10 uñas
+                decoState[id] = newVal;
+                document.getElementById(`qty-${id}`).innerText = newVal;
+                calculate();
+            }
+        }
 
-document.querySelectorAll("select, input").forEach(el => {
-    el.addEventListener("input", calcular);
-});
-</script>
+        function calculate() {
+            let total = 0;
+            let breakdownHTML = '';
 
+            // Técnica
+            const tecnicaEl = document.querySelector('input[name="tecnica"]:checked');
+            const tecPrice = parseFloat(tecnicaEl.value);
+            total += tecPrice;
+            breakdownHTML += `<li><span>Técnica: ${tecnicaEl.dataset.name}</span> <span>S/ ${tecPrice.toFixed(2)}</span></li>`;
+
+            // Largo
+            const largoEl = document.querySelector('input[name="largo"]:checked');
+            const largoPrice = parseFloat(largoEl.value);
+            if(largoPrice > 0) {
+                total += largoPrice;
+                breakdownHTML += `<li><span>${largoEl.dataset.name}</span> <span>S/ ${largoPrice.toFixed(2)}</span></li>`;
+            }
+
+            // Decoraciones
+            decorations.forEach(deco => {
+                const qty = decoState[deco.id];
+                if(qty > 0) {
+                    const subtotal = qty * deco.price;
+                    total += subtotal;
+                    breakdownHTML += `<li><span>${deco.name} (x${qty})</span> <span>S/ ${subtotal.toFixed(2)}</span></li>`;
+                }
+            });
+
+            // Piedritas
+            const piedras = parseInt(document.getElementById('piedras').value) || 0;
+            if(piedras > 0) {
+                const piedrasPrice = piedras * 0.5;
+                total += piedrasPrice;
+                breakdownHTML += `<li><span>Piedritas (x${piedras})</span> <span>S/ ${piedrasPrice.toFixed(2)}</span></li>`;
+            }
+
+            // Retiro
+            const retiro = document.getElementById('retiro').checked;
+            if(retiro) {
+                total += 15;
+                breakdownHTML += `<li><span>Retiro previo</span> <span>S/ 15.00</span></li>`;
+            }
+
+            // Actualizar DOM
+            document.getElementById('breakdown-list').innerHTML = breakdownHTML;
+            document.getElementById('total-price').innerText = total.toFixed(2);
+        }
+
+        // Init calc
+        calculate();
+    </script>
 </body>
 </html>
